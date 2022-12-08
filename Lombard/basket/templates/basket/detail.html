@@ -1,0 +1,79 @@
+{% extends "shop/base.html" %}
+{% load static %}
+{% block title %}
+Ваша корзина покупок
+{% endblock %}
+{% block content %}
+<h1>Ваша корзина покупок</h1>
+<table class="basket">
+    <thead>
+    <tr>
+        <th>Фотография</th>
+        <th>Продукт</th>
+        <th>Количество</th>
+        <th>Удалить</th>
+        <th>Цена за единицу</th>
+        <th>Цена</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for item in basket %}
+    {% with product=item.product %}
+    <tr>
+        <td>
+            <a href="{{ product.get_absolute_url }}">
+                <img class='square article-img' src="
+                                {% if product.image %}
+                                    {{ product.image.url }}
+                                {% else %}
+                                    {% static 'img/no_image.png' %}
+                                {% endif %}">
+            </a>
+        </td>
+        <td>{{ product.name }}</td>
+        <td>{{ item.quantity }}</td>
+        <td><a href="{% url 'basket:basket_remove' product.id  %}">Удалить</a></td>
+        <td class="num">${{ item.price|floatformat:-2 }}</td>
+
+    </tr>
+    {% endwith %}
+    {% endfor %}
+    {% if basket.coupon %}
+    <tr class="subtotal">
+        <td>Промежуточная сумма</td>
+        <td colspan="4"></td>
+        <td class="num">${{ basket.get_total_price|floatformat:-2 }}</td>
+    </tr>
+    <tr>
+        <td>
+            "{{ basket.coupon.code }}" Скидка
+            ({{ basket.coupon.discount }}%)
+        </td>
+        <td colspan="4"></td>
+        <td class="num neg">
+            - ${{ basket.get_discount|floatformat:-2 }}
+        </td>
+    </tr>
+    {% endif %}
+    <tr class="total">
+        <td>Total</td>
+        <td colspan="4"></td>
+        <td class="num">
+            ${{ basket.get_total_price_after_discount|floatformat:-2 }}
+
+        </td>
+    </tr>
+    </tbody>
+</table>
+<form action="{% url 'coupons:apply' %}" method="post">
+    {{ coupon_apply_form }}
+    <input type="submit" value="Apply">
+    {% csrf_token %}
+</form>
+<p class="text-right">
+    <a href="{% url 'shop:product_list' %}" class="button light">Продолжайте ходить по магазину</a>
+    <a href="{% url 'order_create' %}" class="button">
+        Оформить
+    </a>
+</p>
+{% endblock %}

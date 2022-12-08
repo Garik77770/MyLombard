@@ -1,0 +1,32 @@
+{% extends "shop/base.html" %}
+
+{% block title %}Оформление{% endblock %}
+
+{% block content %}
+<h1>Оформление</h1>
+<div class="order-info">
+    <h3>Ваш заказ</h3>
+    <ul>
+        {% for item in basket %}
+        <li>
+            {{ item.quantity }}x {{ item.product.name }}
+            <span>${{ item.total_price }}
+            Общая сумма: ${{ basket.get_total_price_after_discount|floatformat:-2 }}</span>
+        </li>
+        {% endfor %}
+        {% if basket.coupon %}
+        <li>
+            "{{ basket.coupon.code }}" ({{ basket.coupon.discount }}% off)
+            <span>- ${{ basket.get_discount|floatformat:-2 }}</span>
+            <p></p>
+
+        </li>
+        {% endif %}
+    </ul>
+</div>
+<form action="." method="post" class="order-form">
+    {{ form.as_p }}
+    <p><input type="submit" value="Разместить заказ"></p>
+    {% csrf_token %}
+</form>
+{% endblock %}
