@@ -5,7 +5,7 @@
 {% endblock %}
 {% block content %}
 <div class="product-detail">
-    <img class='square article-img' src="{% if product.image %}{{ product.image.url }}
+    <img class='rounded square article-image' src="{% if product.image %}{{ product.image.url }}
         {% else %}{% static 'img/emblem.png' %}{% endif %}">
     <h1>{{ product.name }}</h1>
     <p class="price">${{ product.price }}</p>
